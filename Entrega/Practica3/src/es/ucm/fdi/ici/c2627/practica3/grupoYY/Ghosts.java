@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import es.ucm.fdi.ici.c2627.practica3.grupoYY.ghosts.GhostsInput;
+import es.ucm.fdi.ici.c2627.practica3.grupoYY.ghosts.actions.DispersarAction;
+import es.ucm.fdi.ici.c2627.practica3.grupoYY.ghosts.actions.EmboscarAction;
+import es.ucm.fdi.ici.c2627.practica3.grupoYY.ghosts.actions.GuardarPPillAction;
 import es.ucm.fdi.ici.c2627.practica3.grupoYY.ghosts.actions.HuirAction;
 import es.ucm.fdi.ici.c2627.practica3.grupoYY.ghosts.actions.PerseguirAction;
 import es.ucm.fdi.ici.rules.RuleEngine;
@@ -21,20 +24,24 @@ public class Ghosts extends GhostController {
     private final EnumMap<GHOST, RuleEngine> motores = new EnumMap<>(GHOST.class);
 
     public Ghosts() {
-        this("ghosts-v1.clp");                    // la versión que va al concurso
+        this("ghosts-v0.clp");                    // la version que va al concurso
     }
 
+    /** Cada version, un .clp distinto, con el mismo Input y las mismas acciones. */
     public Ghosts(String ficheroReglas) {
         setName("Ghosts YY");
         setTeam("Grupo YY");
         for (GHOST g : GHOST.values()) {
             HashMap<String, RulesAction> acciones = new HashMap<>();   // las de ESTE fantasma
-            for (RulesAction a : new RulesAction[] { new PerseguirAction(g), new HuirAction(g) })
+            for (RulesAction a : new RulesAction[] {
+                    new PerseguirAction(g), new HuirAction(g), new EmboscarAction(g),
+                    new GuardarPPillAction(g), new DispersarAction(g) })
                 acciones.put(a.getActionId(), a);
             motores.put(g, new RuleEngine(g.name(), RULES_PATH + ficheroReglas, acciones));
         }
     }
 
+    /** Para engancharle la traza desde fuera. */
     public RuleEngine getMotor(GHOST g) { return motores.get(g); }
 
     @Override

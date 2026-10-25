@@ -1,5 +1,6 @@
 import es.ucm.fdi.ici.c2627.practica3.grupoYY.MsPacMan;
 import es.ucm.fdi.ici.c2627.practica3.grupoYY.depurar.TrazaReglas;
+import es.ucm.fdi.ici.c2627.practica3.grupoYY.Ghosts;
 import pacman.Executor;
 
 /** Una partida en pantalla, con la traza de las reglas de Ms. Pac-Man en la consola. */
@@ -13,9 +14,10 @@ public class VerPartida {
                 .build();
 
         MsPacMan pacman = new MsPacMan();
+        Ghosts ghosts = new Ghosts();
         TrazaReglas traza = new TrazaReglas("MSPACMAN", pacman.getMotor(), true);   // true: sólo los cambios
 
-        executor.runGame(pacman, new GhostsAggressive(), 40);   // 40 ms por turno: más, para verlo despacio
+        executor.runGame(pacman, ghosts, 40);   // 40 ms por turno: más, para verlo despacio
         traza.resumen();
     }
 }

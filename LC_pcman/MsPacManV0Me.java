@@ -22,8 +22,7 @@ public class MsPacManV0Me extends PacmanController {
     public MsPacManV0Me() {
         setName("MsPacMan");
         HashMap<String, RulesAction> acciones = new HashMap<>();
-        for (RulesAction a : new RulesAction[] {
-                new CazarAction(), new HuirAction(), new IrAPPillAction(), new ComerAction() })
+        for (RulesAction a : new RulesAction[] { new CazarAction(), new HuirAction(), new IrAPPillAction(), new ComerAction() })
             acciones.put(a.getActionId(), a);
         engine = new RuleEngine("MsPacManRules", RULES_FILE, acciones);
     }
