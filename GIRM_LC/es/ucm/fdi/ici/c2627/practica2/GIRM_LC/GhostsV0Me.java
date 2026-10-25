@@ -271,18 +271,6 @@ private MOVE huirConCriterio(Game game, int nodo, MOVE ultimo, int pacman, GHOST
     return mejor;
 }
 
-
-    private MOVE movimientoAleatorioLegal(
-            Game game, int nodo, MOVE ultimo) {
-
-        MOVE[] opciones = game.getPossibleMoves(nodo, ultimo);
-
-        if (opciones == null || opciones.length == 0) {
-            return MOVE.NEUTRAL;
-        }
-
-        return opciones[(int) (Math.random() * opciones.length)];
-    }
     
     private boolean necesitanDispersarse(Game game) {
         int activos = 0;
