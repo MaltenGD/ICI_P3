@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "PacManEvaluator",
+            "request": "launch",
+            "mainClass": "es.ucm.fdi.ici.PacManEvaluator",
+            "projectName": "MsPacManEngine"
+        },
+        {
+            "type": "java",
+            "name": "PacManParallelEvaluator",
+            "request": "launch",
+            "mainClass": "es.ucm.fdi.ici.PacManParallelEvaluator",
+            "projectName": "MsPacManEngine"
+        },
+        {
+            "type": "java",
+            "name": "Stats",
+            "request": "launch",
+            "mainClass": "pacman.game.util.Stats",
+            "projectName": "MsPacManEngine"
+        },
+        {
+            "type": "java",
+            "name": "Comparar",
+            "request": "launch",
+            "mainClass": "Comparar",
+            "projectName": "Practica3"
+        },
+        {
+            "type": "java",
+            "name": "VerPartida",
+            "request": "launch",
+            "mainClass": "VerPartida",
+            "projectName": "Practica3"
+        },
+        {
+            "type": "java",
+            "name": "ProbarReglas",
+            "request": "launch",
+            "mainClass": "es.ucm.fdi.ici.c2627.practica3.grupoYY.depurar.ProbarReglas",
+            "projectName": "Practica3"
+        }
+    ]
+}

@@ -1,0 +1,6 @@
+codigo completo de Practica3 compilado con las clases del motor que venian en el zip adjunto
+32 casos de reglas: correctos
+20 partidas reales con los metodos del Comparar.java de la plantilla: correctas
+tablas de puntos, turnos por vida y fantasmas comidos impresas por el comparador original
+configuracion, motor, VerPartida.java, Metrica.java, Rivales.java y fuentes de fantasmas conservados
+interfaz de VS Code no ejecutada en esta sesion
