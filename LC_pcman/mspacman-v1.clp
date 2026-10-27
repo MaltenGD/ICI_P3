@@ -1,148 +1,175 @@
-;;; Ms. Pac-Man v1: 22 reglas. Las 9 primeras concluyen hechos intermedios
-;;; (salience 10) y las 13 últimas proponen un ACTION; gana la de más priority.
+;;; mspacman-v1.clp  --  Grupo grupoYY
+;;; Reglas: huir, irAPPill, perseguir, comer.
+;;; Selección por priority del ACTION (mayor gana).
 
 (deftemplate MSPACMAN
-   (slot distFantasma    (type NUMBER))  ; al peligroso más cercano; 1000 si no hay
-   (slot distPPill       (type NUMBER))  ; a la píldora de poder más cercana; 1000 si no quedan
-   (slot numPPills       (type NUMBER))  ; píldoras de poder que quedan
-   (slot numPildoras     (type NUMBER))  ; píldoras normales que quedan
-   (slot peligrososCerca (type NUMBER))  ; peligrosos a 20 pasos o menos
-   (slot vidas           (type NUMBER))  ; vidas que le quedan
-   (slot todosEnCarcel   (type SYMBOL))) ; true si los 4 fantasmas siguen en la cárcel
+   (slot distFantasma (type NUMBER))
+   (slot distPPill    (type NUMBER))
+   (slot ultima       (type SYMBOL)))
 
-(deftemplate FANTASMA                    ; uno por cada fantasma fuera de la cárcel
-   (slot nombre     (type SYMBOL))       ; BLINKY, INKY, PINKY, SUE
-   (slot comestible (type SYMBOL))       ; true o false (minúsculas, como Java)
-   (slot distancia  (type NUMBER))       ; camino más corto desde Ms Pac-Man
-   (slot tiempo     (type NUMBER))       ; turnos que le quedan de comestible
-   (slot cazable    (type SYMBOL)))      ; true si es comestible y llego antes de que se le pase
+(deftemplate FANTASMA
+   (slot nombre     (type SYMBOL))
+   (slot comestible (type SYMBOL))
+   (slot distancia  (type NUMBER))
+   (slot tiempo     (type NUMBER)))
+
+(deftemplate PELIGRO)
+(deftemplate OPORTUNIDAD)
+(deftemplate SIN-PILLS)
 
 (deftemplate ACTION
-   (slot id) (slot info (default "")) (slot priority (type NUMBER)))
+   (slot id)
+   (slot info (default ""))
+   (slot priority (type NUMBER))
+   (slot fantasma (type SYMBOL)))
 
-;; ---- Hechos intermedios ------------------------------------------------
-(deftemplate PELIGRO      (slot nivel (type SYMBOL)))  ; medio, alto, critico, acorralado
-(deftemplate OPORTUNIDAD  (slot tipo  (type SYMBOL)))  ; caza, remate, ppillCerca
-(deftemplate CONTEXTO     (slot tipo  (type SYMBOL)))  ; finNivel, ultimaVida
+;;; =====================================================================
+;;;  BLOQUE 0 · Hechos intermedios
+;;; =====================================================================
 
-;; =================== PELIGRO ===================
-;; 1 · peligroso a 6 o menos
-(defrule peligroCritico (declare (salience 10))
-   (FANTASMA (comestible false) (distancia ?d&:(and (>= ?d 0) (<= ?d 6))))
-   => (assert (PELIGRO (nivel critico))))
+(defrule peligroCerca
+   (declare (salience 30))
+   (MSPACMAN (distFantasma ?d&:(< ?d 25)))
+   =>
+   (assert (PELIGRO)))
 
-;; 2 · peligroso entre 7 y 14
-(defrule peligroAlto (declare (salience 10))
-   (FANTASMA (comestible false) (distancia ?d&:(and (>= ?d 7) (<= ?d 14))))
-   => (assert (PELIGRO (nivel alto))))
+(defrule sigueElPeligro
+   (declare (salience 30))
+   (MSPACMAN (ultima huir) (distFantasma ?d&:(< ?d 30)))
+   =>
+   (assert (PELIGRO)))
 
-;; 3 · peligroso entre 15 y 30
-(defrule peligroMedio (declare (salience 10))
-   (FANTASMA (comestible false) (distancia ?d&:(and (>= ?d 15) (<= ?d 30))))
-   => (assert (PELIGRO (nivel medio))))
-
-;; 4 · dos o más peligrosos a 20 o menos
-(defrule acorralada (declare (salience 10))
-   (MSPACMAN (peligrososCerca ?n&:(>= ?n 2)))
-   => (assert (PELIGRO (nivel acorralado))))
-
-;; =================== OPORTUNIDADES Y CONTEXTO ===================
-;; 5 · comestible alcanzable a 30 o menos
-(defrule oportunidadCaza (declare (salience 10))
-   (FANTASMA (comestible true) (cazable true) (distancia ?d&:(and (>= ?d 0) (<= ?d 30))))
-   => (assert (OPORTUNIDAD (tipo caza))))
-
-;; 6 · comestible alcanzable a 5 o menos
-(defrule oportunidadRemate (declare (salience 10))
-   (FANTASMA (comestible true) (cazable true) (distancia ?d&:(and (>= ?d 0) (<= ?d 5))))
-   => (assert (OPORTUNIDAD (tipo remate))))
-
-;; 7 · píldora de poder a 25 o menos
-(defrule oportunidadPPill (declare (salience 10))
-   (MSPACMAN (numPPills ?n&:(> ?n 0)) (distPPill ?p&:(<= ?p 25)))
-   => (assert (OPORTUNIDAD (tipo ppillCerca))))
-
-;; 8 · quedan 80 píldoras o menos: se acaba el nivel
-(defrule finDeNivel (declare (salience 10))
-   (MSPACMAN (numPildoras ?n&:(and (> ?n 0) (<= ?n 80))))
-   => (assert (CONTEXTO (tipo finNivel))))
-
-;; 9 · última vida
-(defrule ultimaVida (declare (salience 10))
-   (MSPACMAN (vidas ?v&:(<= ?v 1)))
-   => (assert (CONTEXTO (tipo ultimaVida))))
-
-;; =================== COMER ===================
-;; 10 · por defecto
-(defrule comer
-   (MSPACMAN)
-   => (assert (ACTION (id comer) (info "comer: no pasa nada") (priority 10))))
-
-;; 11 · sin ningún peligro
-(defrule comerTranquila
+(defrule oportunidadCaza
+   (declare (salience 28))
    (not (PELIGRO))
-   (MSPACMAN)
-   => (assert (ACTION (id comer) (info "comer: sin peligro") (priority 20))))
+   (not (OPORTUNIDAD))
+   (MSPACMAN (distFantasma ?df&:(> ?df 30)))
+   (FANTASMA (comestible true) (distancia ?d) (tiempo ?t&:(> ?t (+ ?d 2))))
+   =>
+   (assert (OPORTUNIDAD)))
 
-;; 12 · peligro lejano: sigue comiendo
-(defrule comerVigilando
-   (PELIGRO (nivel medio))
-   => (assert (ACTION (id comer) (info "comer: peligro lejano") (priority 40))))
+;;; =====================================================================
+;;;  BLOQUE 1 · Huir / power pill
+;;; =====================================================================
 
-;; 13 · queda poco nivel y nada pegado: termínalo
-(defrule terminarNivel
-   (CONTEXTO (tipo finNivel))
-   (not (PELIGRO (nivel critico)))
-   => (assert (ACTION (id comer) (info "comer: acabar el nivel") (priority 45))))
+;; R1a · con peligro y fantasma lejos (>25) -> a por la PPill SIEMPRE
+(defrule aLaPPillLejos
+   (declare (salience 26))
+   (PELIGRO)
+   (MSPACMAN (distPPill ?p&:(< ?p 999)) (distFantasma ?f&:(> ?f 25)))
+   =>
+   (assert (ACTION (id irAPPill) (priority 93)
+                   (info "R1a: fantasma lejos, a por la PPill"))))
 
-;; =================== PÍLDORA DE PODER ===================
-;; 14 · todos en la cárcel: aprovecha para ir a por ella
-(defrule pPillAlEmpezar
-   (MSPACMAN (numPPills ?n&:(> ?n 0)) (todosEnCarcel true))
-   => (assert (ACTION (id irAPPill) (info "pPill: fantasmas en la cárcel") (priority 50))))
+;; R1b · con peligro y fantasma cerca (<=25) -> a por la PPill solo si llego antes
+(defrule aLaPPillCerca
+   (declare (salience 25))
+   (PELIGRO)
+   (MSPACMAN (distPPill ?p) (distFantasma ?f&:(<= ?f 25)))
+   (test (< (+ ?p 2) ?f))
+   =>
+   (assert (ACTION (id irAPPill) (priority 92)
+                   (info "R1b: llego a la PPill antes que el fantasma"))))
 
-;; 15 · peligro lejano o medio y la píldora cerca
-(defrule pPillOportuna
-   (OPORTUNIDAD (tipo ppillCerca))
-   (PELIGRO (nivel medio|alto))
-   => (assert (ACTION (id irAPPill) (info "pPill: cerca y hay peligro") (priority 65))))
+;; R2 · con peligro -> huir (pierde contra aLaPPill* por priority)
+(defrule huir
+   (declare (salience 24))
+   (PELIGRO)
+   =>
+   (assert (ACTION (id huir) (priority 80)
+                   (info "R2: hay peligro"))))
 
-;; 16 · peligro serio y la píldora está más cerca que el fantasma
-(defrule pPillAntesQueEl
-   (PELIGRO (nivel alto|critico))
-   (MSPACMAN (numPPills ?n&:(> ?n 0)) (distFantasma ?f) (distPPill ?p&:(< ?p ?f)))
-   => (assert (ACTION (id irAPPill) (info "pPill: llego antes que él") (priority 90))))
+;; R3 · peligro extremo (<=6) -> huir sí o sí
+(defrule huirDesesperado
+   (declare (salience 27))
+   (MSPACMAN (distFantasma ?d&:(<= ?d 6)))
+   =>
+   (assert (ACTION (id huir) (priority 95)
+                   (info "R3: peligro pegado"))))
 
-;; =================== HUIR ===================
-;; 17 · peligro alto
-(defrule huirAlto
-   (PELIGRO (nivel alto))
-   => (assert (ACTION (id huir) (info "huir: peligro alto") (priority 75))))
+;;; =====================================================================
+;;;  BLOQUE 2 · Rematar y cazar
+;;; =====================================================================
 
-;; 18 · peligro alto en la última vida: más prudente
-(defrule huirUltimaVida
-   (PELIGRO (nivel alto))
-   (CONTEXTO (tipo ultimaVida))
-   => (assert (ACTION (id huir) (info "huir: última vida") (priority 78))))
+(defrule rematarAntesDeHuir
+   (declare (salience 27))
+   (MSPACMAN (distFantasma ?df))
+   (FANTASMA (nombre ?g) (comestible true)
+             (distancia ?dc&:(< ?dc ?df))
+             (tiempo ?t&:(> ?t (+ ?dc 2))))
+   (not (FANTASMA (comestible true) (distancia ?d2&:(< ?d2 ?dc))))
+   =>
+   (assert (ACTION (id perseguir) (fantasma ?g) (priority 85)
+                   (info (str-cat "R-extra: rematar a " ?g " antes de huir")))))
 
-;; 19 · peligro crítico
-(defrule huirCritico
-   (PELIGRO (nivel critico))
-   => (assert (ACTION (id huir) (info "huir: peligro crítico") (priority 85))))
-
-;; 20 · acorralada por dos o más
-(defrule huirAcorralada
-   (PELIGRO (nivel acorralado))
-   => (assert (ACTION (id huir) (info "huir: acorralada") (priority 88))))
-
-;; =================== CAZAR ===================
-;; 21 · comestible alcanzable y nada crítico
 (defrule cazar
-   (OPORTUNIDAD (tipo caza))
-   (not (PELIGRO (nivel critico)))
-   => (assert (ACTION (id cazar) (info "cazar: comestible alcanzable") (priority 80))))
+   (declare (salience 22))
+   (OPORTUNIDAD)
+   (MSPACMAN (distFantasma ?df&:(> ?df 30)))
+   (FANTASMA (nombre ?g) (comestible true)
+             (distancia ?d) (tiempo ?t&:(> ?t (+ ?d 2))))
+   (not (FANTASMA (comestible true) (distancia ?d2&:(< ?d2 ?d))))
+   =>
+   (assert (ACTION (id perseguir) (fantasma ?g) (priority 70)
+                   (info (str-cat "R4: cazar a " ?g)))))
 
-;; 22 · comestible a punto: se remata aunque haya peligro (salvo acorralada)
-(defrule rematar
-   (OPORTUNIDAD (tipo remate))
-   => (assert (ACTION (id cazar) (info "cazar: rematar") (priority 87))))
+(defrule cazarContrareloj
+   (declare (salience 21))
+   (OPORTUNIDAD)
+   (MSPACMAN (distFantasma ?df&:(> ?df 20)))
+   (FANTASMA (nombre ?g) (comestible true)
+             (distancia ?d&:(< ?d 15)) (tiempo ?t&:(> ?t 0)))
+   =>
+   (assert (ACTION (id perseguir) (fantasma ?g) (priority 65)
+                   (info (str-cat "R5: cazar contra reloj a " ?g)))))
+
+;;; =====================================================================
+;;;  BLOQUE 4 · Comer / PPill de mantenimiento
+;;; =====================================================================
+
+(defrule comer
+   (declare (salience 8))
+   (not (PELIGRO))
+   (not (OPORTUNIDAD))
+   =>
+   (assert (ACTION (id comer) (priority 10)
+                   (info "R9: no pasa nada, comer"))))
+
+(defrule irAPPillSiNoQuedanPills
+   (declare (salience 7))
+   (not (PELIGRO))
+   (SIN-PILLS)
+   (MSPACMAN (distPPill ?p&:(< ?p 999)))
+   =>
+   (assert (ACTION (id irAPPill) (priority 15)
+                   (info "R11: sin píldoras normales, a por la PPill"))))
+
+;;; =====================================================================
+;;;  BLOQUE 5 · Anti-bloqueo (corregido: mira si SIGUE habiendo peligro)
+;;; =====================================================================
+
+(defrule noRepetirHuir
+   (declare (salience 5))
+   (MSPACMAN (ultima huir) (distFantasma ?d&:(> ?d 30)))
+   (not (PELIGRO))
+   =>
+   (assert (ACTION (id comer) (priority 5)
+                   (info "R12: ya no hace falta huir"))))
+
+(defrule noRepetirCazar
+   (declare (salience 5))
+   (MSPACMAN (ultima perseguir))
+   (not (FANTASMA (comestible true)))
+   =>
+   (assert (ACTION (id comer) (priority 5)
+                   (info "R13: ya no hay comestibles"))))
+
+;;; =====================================================================
+;;;  BLOQUE 6 · Fallback
+;;; =====================================================================
+
+(defrule fallback
+   (declare (salience -10))
+   =>
+   (assert (ACTION (id comer) (priority 0)
+                   (info "R14: fallback"))))

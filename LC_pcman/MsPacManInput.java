@@ -10,63 +10,49 @@ import pacman.game.Game;
 
 public class MsPacManInput extends RulesInput {
 
-    private static final int LEJOS = 1000;      // "no hay": ningún fantasma, ninguna píldora
-    private static final int CERCA_PELIGRO = 20;
+    private static final int LEJOS = 1000;        // "no hay": ningún fantasma, ninguna píldora
 
-    // Sin inicializar aquí: parseInput() se ejecuta desde el constructor de la superclase
-    private List<String> fantasmas;
-    private int distFantasma, distPPill, numPPills, numPildoras, peligrososCerca, vidas;
-    private boolean todosEnCarcel;
+    private int distFantasma;                     // al fantasma peligroso más cercano
+    private int distPPill;                        // a la píldora de poder más cercana
+    private List<String> fantasmas;               // un hecho FANTASMA por cada uno fuera de la cárcel
+    private final String ultima;                  // la acción que ganó en el turno anterior
 
-    public MsPacManInput(Game game) {
-        super(game);                            // llama a parseInput()
+    public MsPacManInput(Game game, String ultima) {
+        super(game);                              // llama a parseInput()
+        this.ultima = ultima;
     }
 
     @Override
     public void parseInput() {
         int pacman = game.getPacmanCurrentNodeIndex();
-        fantasmas = new ArrayList<>();
         distFantasma = LEJOS;
-        peligrososCerca = 0;
-        int enCarcel = 0;
-
+        fantasmas = new ArrayList<>();
         for (GHOST g : GHOST.values()) {
-            if (game.getGhostLairTime(g) > 0) { enCarcel++; continue; }
+            if (game.getGhostLairTime(g) > 0) continue;      // en la cárcel no cuenta
             int nodo = game.getGhostCurrentNodeIndex(g);
-            if (nodo == -1) continue;
-
             boolean comestible = game.isGhostEdible(g);
-            int d = game.getShortestPathDistance(pacman, nodo);
-            int tiempo = comestible ? game.getGhostEdibleTime(g) : 0;
-            boolean cazable = comestible && tiempo > d;
-
-            if (!comestible && d >= 0) {
-                distFantasma = Math.min(distFantasma, d);
-                if (d <= CERCA_PELIGRO) peligrososCerca++;
-            }
-            fantasmas.add(String.format(
-                    "(FANTASMA (nombre %s) (comestible %s) (distancia %d) (tiempo %d) (cazable %s))",
-                    g, comestible, d, tiempo, cazable));
+            // peligroso: lo que tarda él en llegar a mí, que no puede dar la vuelta
+            // comestible: lo que tardo yo en llegar a él
+            int d = comestible
+                    ? game.getShortestPathDistance(pacman, nodo)
+                    : game.getShortestPathDistance(nodo, pacman, game.getGhostLastMoveMade(g));
+            if (!comestible) distFantasma = Math.min(distFantasma, d);
+            fantasmas.add(String.format("(FANTASMA (nombre %s) (comestible %s) (distancia %d) (tiempo %d))",
+                    g, comestible, d, game.getGhostEdibleTime(g)));
         }
-        todosEnCarcel = enCarcel >= GHOST.values().length;
-
-        int[] ppills = game.getActivePowerPillsIndices();
-        numPPills = ppills.length;
         distPPill = LEJOS;
-        for (int p : ppills)
-            distPPill = Math.min(distPPill, game.getShortestPathDistance(pacman, p));
-
-        numPildoras = game.getActivePillsIndices().length;
-        vidas = game.getPacmanNumberOfLivesRemaining();
+        for (int ppill : game.getActivePowerPillsIndices())
+            distPPill = Math.min(distPPill, game.getShortestPathDistance(pacman, ppill));
     }
 
     @Override
     public Collection<String> getFacts() {
-        List<String> facts = new ArrayList<>(fantasmas);
-        facts.add(String.format(
-                "(MSPACMAN (distFantasma %d) (distPPill %d) (numPPills %d) (numPildoras %d)"
-                + " (peligrososCerca %d) (vidas %d) (todosEnCarcel %s))",
-                distFantasma, distPPill, numPPills, numPildoras, peligrososCerca, vidas, todosEnCarcel));
-        return facts;
+    	 List<String> facts = new ArrayList<>(fantasmas);
+    	    facts.add(String.format("(MSPACMAN (distFantasma %d) (distPPill %d) (ultima %s))",
+    	            distFantasma, distPPill,
+    	            ultima == null ? "comer" : ultima.toLowerCase()));
+    	    if (game.getActivePillsIndices().length == 0)
+    	        facts.add("(SIN-PILLS)");
+    	    return facts;
     }
 }
