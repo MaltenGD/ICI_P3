@@ -357,3 +357,11 @@ los valores despues de ± son errores tipicos, no desviaciones tipicas. D indica
 frente a v3.3, la media de puntos pasa de 2338.16 a 9666.17, un 313.4 % mas. v4 consigue mas puntos y come mas fantasmas frente a los cinco rivales. tambien mejora los turnos por vida frente a cuatro rivales; frente a Avanzado no se ve una diferencia clara.
 
 frente a v2.1, la media de puntos pasa de 5096.25 a 9666.17, un 89.7 % mas. la mejora de puntos se observa frente a los cinco rivales segun el criterio del comparador. en esta tanda, la fusion consigue mas puntos que las dos versiones usadas como referencia.
+
+---
+
+## Elección de versión para Fantasmas a concurso
+
+Elegimos **mspacman-v4** como nuestro controlador a concurso
+
+---
