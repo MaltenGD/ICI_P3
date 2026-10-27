@@ -13,6 +13,8 @@ import java.util.function.Supplier;
 
 import es.ucm.fdi.ici.c2627.practica3.grupoYY.Ghosts;
 import es.ucm.fdi.ici.c2627.practica3.grupoYY.MsPacMan;
+import es.ucm.fdi.ici.c2627.practica3.grupoYY.companera.actualizada.MsPacManActualizada;
+import es.ucm.fdi.ici.c2627.practica3.grupoYY.ejemplo.MsPacManEjemplo;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
 import pacman.game.Game;
@@ -39,8 +41,9 @@ public class Comparar {
     static final Map<String, Supplier<PacmanController>> RIVALES_PACMANS = Rivales.pacmans();
 
     static {
-        MIS_PACMANS.put("v0", () -> new MsPacMan("mspacman-v0.clp"));     // las seis primeras reglas
-        MIS_PACMANS.put("v1", () -> new MsPacMan("mspacman-v1.clp"));     // con rematar
+        MIS_PACMANS.put("v2.1", () -> new MsPacMan("mspacman-v2.1.clp"));
+        MIS_PACMANS.put("v3.3", () -> new MsPacManActualizada("mspacman-v3.3.clp"));
+        MIS_PACMANS.put("v4", () -> new MsPacMan("mspacman-v4.clp"));
 
         MIS_FANTASMAS.put("v0", () -> new Ghosts("ghosts-v0.clp"));       // G1 y G2
         MIS_FANTASMAS.put("v1", () -> new Ghosts("ghosts-v1.clp"));       // con G3
@@ -57,7 +60,7 @@ public class Comparar {
     static final int PARTIDAS = 300;          // por versión y rival; no lo cambiéis entre versiones
     static final long SEMILLA = 1;            // la partida i usa la semilla SEMILLA + i
     static final int LIMITE_TURNOS = 4000;    // el mismo que el Executor
-    static final int HILOS = Runtime.getRuntime().availableProcessors();
+    static final int HILOS = Runtime.getRuntime().availableProcessors(); 
 
     static final AtomicInteger hechas = new AtomicInteger();   // para ir viendo el progreso
 
