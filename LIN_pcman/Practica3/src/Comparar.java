@@ -41,7 +41,7 @@ public class Comparar {
 
     static {
         MIS_PACMANS.put("v2", () -> new MsPacMan("mspacman-v2.clp"));     // nueve reglas
-        MIS_PACMANS.put("v2.1", () -> new MsPacMan("mspacman-v1.clp")); // quince reglas
+        MIS_PACMANS.put("v2.1", () -> new MsPacMan("mspacman-v2.1.clp")); // quince reglas
 
         MIS_FANTASMAS.put("v0", () -> new Ghosts("ghosts-v0.clp"));       // G1 y G2
         MIS_FANTASMAS.put("v1", () -> new Ghosts("ghosts-v1.clp"));       // con G3
