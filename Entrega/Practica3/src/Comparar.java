@@ -29,7 +29,7 @@ import pacman.game.util.Stats;
  */
 public class Comparar {
 
-    static final boolean COMPARO_FANTASMAS = false;  // false: vuestras Ms. Pac-Man contra RIVALES_FANTASMAS
+    static final boolean COMPARO_FANTASMAS = true;  // false: vuestras Ms. Pac-Man contra RIVALES_FANTASMAS
                                                      // true:  vuestros fantasmas contra RIVALES_PACMANS
 
     // ---- 1. Vuestras versiones, en orden: cada una contra la anterior -------
@@ -45,8 +45,8 @@ public class Comparar {
         MIS_PACMANS.put("v3.3", () -> new MsPacManActualizada("mspacman-v3.3.clp"));
         MIS_PACMANS.put("v4", () -> new MsPacMan("mspacman-v4.clp"));
 
-        MIS_FANTASMAS.put("v0", () -> new Ghosts("ghosts-v0.clp"));       // G1 y G2
-        MIS_FANTASMAS.put("v1", () -> new Ghosts("ghosts-v1.clp"));       // con G3
+        MIS_FANTASMAS.put("v1", () -> new Ghosts("ghosts-v1.clp"));       // G1 y G2
+        MIS_FANTASMAS.put("v2", () -> new Ghosts("ghosts-v2.clp"));       // con G3
 
         // Si queréis más rivales, aquí, y desde el principio: los mismos para todas las versiones.
         // RIVALES_FANTASMAS.put("P2 nuestros", es.ucm.fdi.ici.c2627.practica2.grupoYY.Ghosts::new);
