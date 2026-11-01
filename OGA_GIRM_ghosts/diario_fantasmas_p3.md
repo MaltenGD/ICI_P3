@@ -37,9 +37,9 @@ Probamos la "v0" en "VerPartida" y con "TrazaReglas". La traza salía limpia, si
 
 Una vez teníamos la base funcionando, nos pusimos a mirar varias partidas en pantalla con "VerPartida" para ver cómo se comportaban en juego real. 
 
-En general se movían coordinados, pero había una jugada donde morían de forma absurda: **cuando Ms. Pac-Man va directa a una píldora de poder**. Los fantasmas seguían en su persecución o emboscada a tope hacia ella, Pac-Man tocaba la píldora y, en ese mismo instante, se comía al fantasma que tenía a dos casillas sin que este pudiera hacer nada. En muchos turnos perdíamos dos o tres fantasmas seguidos por el mismo motivo.
+En general se movían coordinados, pero cuando Ms. Pac-Man va directa a una píldora de poder, los fantasmas morían de forma absurda. Los fantasmas seguían en su persecución o emboscada a tope hacia ella, Pac-Man tocaba la píldora y justo en ese momento, se comía al fantasma que tenía a dos casillas sin que este pudiera hacer nada. En muchos turnos perdíamos dos o tres fantasmas seguidos por el mismo motivo.
 
-Pensamos que la solución era meter una regla preventiva en "ghosts-v1.clp": si vemos que Ms. Pac-Man está muy cerca de una píldora de poder y nosotros estamos cerca de ella, abortar el ataque y salir corriendo antes de que se la coma.
+Pensamos que la solución era meter una regla preventiva en "ghosts-v1.clp" en la que si vemos que Ms. Pac-Man está muy cerca de una píldora de poder y nosotros estamos cerca de ella, cancelar el ataque y salir corriendo antes de que se la coma.
 
 Añadimos la regla R7 ("huirDeLaPPill"):
 
@@ -54,7 +54,7 @@ Añadimos la regla R7 ("huirDeLaPPill"):
    (assert (ACTION (id huir) (info "R7: Ms. Pac-Man junto a una PPill") (priority 45))))
 ```
 
-Le pusimos prioridad **45** para que estuviese por encima de dispersarse (40) y de los roles de ataque (20 y 10), pero sin interferir con la huida cuando ya somos comestibles (90).
+Le pusimos prioridad a 45 para que estuviese por encima de dispersarse (40) y de los roles de ataque (20 y 10), pero sin interferir con la huida cuando ya somos comestibles (90).
 
 Comprobamos con "TrazaReglas" que la regla se disparaba en las situaciones previstas y dejamos el código listo para medirlo contra la v0.
 
