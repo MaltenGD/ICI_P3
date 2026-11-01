@@ -6,7 +6,7 @@
 
 ---
 
-## Sesión 1 · Primer contacto con Jess y port de la Pracitca 2 a reglas (version v0)
+## Sesión 1 (Jueves 29) · Primer contacto con Jess y port de la Pracitca 2 a reglas (version v0)
 
 Empezamos la práctica leyendo la wiki de la asignatura y mirando qué traía el zip de partida. Al principio el tema de las reglas con Jess nos chocó un poco, sobre todo al ver cómo se integraba Java con CLIPS: las clases RuleEngine, RulesInput y RulesAction, cómo funciona la agenda de Rete y cómo se resuelve qué acción ejecutar con el campo "priority" del hecho "ACTION".
 
@@ -33,13 +33,13 @@ Probamos la "v0" en "VerPartida" y con "TrazaReglas". La traza salía limpia, si
 
 ---
 
-## Sesión 2 · Ver las partidas y la idea de la v1
+## Sesión 2 (Viernes 30)· Ver las partidas y la idea de la v1
 
 Una vez teníamos la base funcionando, nos pusimos a mirar varias partidas en pantalla con "VerPartida" para ver cómo se comportaban en juego real. 
 
-En general se movían coordinados, pero había una jugada donde morían de forma absurda: **cuando Ms. Pac-Man va directa a una píldora de poder**. Los fantasmas seguían en su persecución o emboscada a tope hacia ella, Pac-Man tocaba la píldora y, en ese mismo instante, se comía al fantasma que tenía a dos casillas sin que este pudiera hacer nada. En muchos turnos perdíamos dos o tres fantasmas seguidos por el mismo motivo.
+En general se movían coordinados, pero cuando Ms. Pac-Man va directa a una píldora de poder, los fantasmas morían de forma absurda. Los fantasmas seguían en su persecución o emboscada a tope hacia ella, Pac-Man tocaba la píldora y justo en ese momento, se comía al fantasma que tenía a dos casillas sin que este pudiera hacer nada. En muchos turnos perdíamos dos o tres fantasmas seguidos por el mismo motivo.
 
-Pensamos que la solución era meter una regla preventiva en "ghosts-v1.clp": si vemos que Ms. Pac-Man está muy cerca de una píldora de poder y nosotros estamos cerca de ella, abortar el ataque y salir corriendo antes de que se la coma.
+Pensamos que la solución era meter una regla preventiva en "ghosts-v1.clp" en la que si vemos que Ms. Pac-Man está muy cerca de una píldora de poder y nosotros estamos cerca de ella, cancelar el ataque y salir corriendo antes de que se la coma.
 
 Añadimos la regla R7 ("huirDeLaPPill"):
 
@@ -54,15 +54,10 @@ Añadimos la regla R7 ("huirDeLaPPill"):
    (assert (ACTION (id huir) (info "R7: Ms. Pac-Man junto a una PPill") (priority 45))))
 ```
 
-Le pusimos prioridad **45** para que estuviese por encima de dispersarse (40) y de los roles de ataque (20 y 10), pero sin interferir con la huida cuando ya somos comestibles (90).
+Le pusimos prioridad a 45 para que estuviese por encima de dispersarse (40) y de los roles de ataque (20 y 10), pero sin interferir con la huida cuando ya somos comestibles (90).
 
 Comprobamos con "TrazaReglas" que la regla se disparaba en las situaciones previstas y dejamos el código listo para medirlo contra la v0.
 
----
-
-## Sesión 3 · Banco de 300 partidas y el chasco de la v1
-
-Lanzamos el comparador ("Comparar.java") con 300 partidas por rival, usando las mismas semillas (1 a 300) contra los tres rivales de Ms. Pac-Man (*Basico*, *Intermedio* y *Avanzado*). 
 
 ### Resultados frente a v0 (300 partidas)
 
@@ -100,23 +95,24 @@ Lanzamos el comparador ("Comparar.java") con 300 partidas por rival, usando las 
 
 ### ¿Por qué ha salido tan mal contra Avanzado?
 
-La idea parecía buena en teoría, pero igualmente la puntuación empeora claramente con Ms. Pac-Man Avanzado ($+593$ puntos y casi 1 fantasma más comido por partida, pasando de sobra el umbral de $2\cdot ET_D$).
+La idea parecía buena en teoría, pero la puntuacion incluso empeora con el pacman en avanzado.
 
-Pusimos de nuevo "VerPartida" contra el rival Avanzado para entender qué estaba pasando, y nos dimos cuenta de varias cosas:
-1. **Le dejamos el camino libre:** Poner un radio de 15 pasos para la píldora hace que los fantasmas salgan corriendo antes de tiempo. Pac-Man Avanzado va directo a por comida y, en cuanto se acerca un poco a la píldora, los fantasmas se apartan y le despejan el pasillo. Pac-Man se come la píldora gratis y sin presión.
-2. **Los fantasmas se acorralan solos:** Al huir a ciegas por pasillos estrechos cuando Pac-Man aún ni ha comido la píldora, los fantasmas acaban metiéndose en fondos de saco. Cuando Pac-Man finalmente llega a la píldora y se la traga, los fantasmas ya no tienen salida y caen uno detrás de otro.
-3. **Falta de agresividad coordinada e intercepción:** En vez de huir por miedo a la píldora y regalarle el mapa, lo que de verdad necesitamos es presionar sus rutas con anticipación (interceptar cruces en vez de seguirla en fila india) y controlar las zonas donde Pac-Man busca limpiar puntos.
+Pusimos de nuevo "VerPartida" contra el rival Avanzado y nos dimos cuenta de varias cosas:
+
+1. Poner un radio de 15 pasos para la píldora hace que los fantasmas salgan corriendo antes de tiempo. 
+2. Los fantasmas se acorralan solos para cuando pacman se ha comido la power pil, de forma que no tienen forma de huir
+
+
 
 ### Qué hacer en la siguiente versión (v2)
 Lo dejamos aquí por hoy. Visto que la huida preventiva aislada de la v1 empeora el control del mapa, para la `v2` tenemos claro el plan:
-- Quitar esa regla de huida preventiva precipitada ante píldoras de poder y volver a una huida centrada en cuando somos comestibles.
-- Apostar fuerte por la intercepción anticipada de rutas (aprovechando la acción de emboscada no solo con Pinky, sino permitiendo que otros fantasmas como Blinky o Sue corten camino cuando Pac-Man está a distancia).
-- Controlar el final de partida supervisando las últimas píldoras de comida del laberinto para no dejarle limpiar el nivel con facilidad.
-- Desglosar reglas específicas de dispersión por fantasma para que cubran distintas salidas en las intersecciones, ampliando la base hasta el mínimo de 15 reglas requeridas por la práctica.
+- Quitar esa regla de huida preventiva por píldoras de poder y volver a la huida cuando son comestibles.
+- Mejorar mas la intercepción anticipada de rutas (aprovechando la acción de emboscada) para que todos los fantasmas puedan hacerlo (no solo Pinkys).
+- Controlar el final de partida supervisando las últimas píldoras ya que es mas facil campear las pocas pildoras del final.
 
 ---
 
-## Sesión 4 · Versión v2 (30 de octubre de 2026): Intercepción, control de comida y 15 reglas
+## Sesión 3 (Viernes 30) Versión v2: Intercepción, control de comida y 15 reglas
 
 Se ha creado una nueva versión de las reglas de los fantasmas (`ghosts-v2.clp`) a partir de la plantilla y de los problemas detectados en las versiones anteriores. Definimos quince reglas para controlar el comportamiento de BLINKY, PINKY, INKY y SUE. Usamos la estrategia de diferentes prioridades para decidir las acciones: Huir tiene prioridad 90, controlar comida 70, interceptar 60-65, dispersarse 40, guardar una píldora de poder / roles 20-25 y perseguir 10.
 
@@ -138,7 +134,7 @@ La media de turnos por vida pasa de 1856 a 1804. v2 reduce los turnos por vida, 
 | rival | v1 ± error tipico | v2 ± error tipico | D | 2 · ET_D | resultado |
 | --- | ---: | ---: | ---: | ---: | --- |
 | Basico | 2,05 ± 0,09 | 2,01 ± 0,09 | -0,04 | 0,26 | ruido |
-| Intermedio | 3,31 ± 0,18 | 3,66 ± 0,18 | +0,34 | 0.52 | ruido |
+| Intermedio | 3,31 ± 0,18 | 3,66 ± 0,18 | +0,34 | 0,52 | ruido |
 | Avanzado | 12,14 ± 0,22 | 11,97 ± 0,21 | -0,17 | 0,61 | ruido |
 | MEDIA (3) | 5,83 ± 0,10 | 5,88 ± 0,10 | +0,04 | 0,28 | ruido |
 
