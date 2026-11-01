@@ -1,6 +1,6 @@
-import es.ucm.fdi.ici.c2627.practica3.grupoYY.MsPacMan;
-import es.ucm.fdi.ici.c2627.practica3.grupoYY.depurar.TrazaReglas;
-import es.ucm.fdi.ici.c2627.practica3.grupoYY.Ghosts;
+import es.ucm.fdi.ici.c2627.practica3.GIRM_OGA_LIN_LING.MsPacMan;
+import es.ucm.fdi.ici.c2627.practica3.GIRM_OGA_LIN_LING.depurar.TrazaReglas;
+import es.ucm.fdi.ici.c2627.practica3.GIRM_OGA_LIN_LING.Ghosts;
 import pacman.Executor;
 
 /** Una partida en pantalla, con la traza de las reglas de Ms. Pac-Man en la consola. */

@@ -11,10 +11,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-import es.ucm.fdi.ici.c2627.practica3.grupoYY.Ghosts;
-import es.ucm.fdi.ici.c2627.practica3.grupoYY.MsPacMan;
-import es.ucm.fdi.ici.c2627.practica3.grupoYY.companera.actualizada.MsPacManActualizada;
-import es.ucm.fdi.ici.c2627.practica3.grupoYY.ejemplo.MsPacManEjemplo;
+import es.ucm.fdi.ici.c2627.practica3.GIRM_OGA_LIN_LING.Ghosts;
+import es.ucm.fdi.ici.c2627.practica3.GIRM_OGA_LIN_LING.MsPacMan;
+import es.ucm.fdi.ici.c2627.practica3.GIRM_OGA_LIN_LING.companera.actualizada.MsPacManActualizada;
+import es.ucm.fdi.ici.c2627.practica3.GIRM_OGA_LIN_LING.ejemplo.MsPacManEjemplo;
 import pacman.controllers.GhostController;
 import pacman.controllers.PacmanController;
 import pacman.game.Game;
@@ -49,8 +49,8 @@ public class Comparar {
         MIS_FANTASMAS.put("v2", () -> new Ghosts("ghosts-v2.clp"));       // con G3
 
         // Si queréis más rivales, aquí, y desde el principio: los mismos para todas las versiones.
-        // RIVALES_FANTASMAS.put("P2 nuestros", es.ucm.fdi.ici.c2627.practica2.grupoYY.Ghosts::new);
-        // RIVALES_PACMANS.put("P2 nuestra", es.ucm.fdi.ici.c2627.practica2.grupoYY.MsPacMan::new);
+        // RIVALES_FANTASMAS.put("P2 nuestros", es.ucm.fdi.ici.c2627.practica2.GIRM_OGA_LIN_LING.Ghosts::new);
+        // RIVALES_PACMANS.put("P2 nuestra", es.ucm.fdi.ici.c2627.practica2.GIRM_OGA_LIN_LING.MsPacMan::new);
     }
 
     // ---- 3. Cómo se mide ----------------------------------------------------
