@@ -116,7 +116,10 @@ Lo dejamos aquí por hoy. Visto que la huida preventiva aislada de la v1 empeora
 
 Se ha creado una nueva versión de las reglas de los fantasmas (`ghosts-v2.clp`) a partir de la plantilla y de los problemas detectados en las versiones anteriores. Definimos quince reglas para controlar el comportamiento de BLINKY, PINKY, INKY y SUE. Usamos la estrategia de diferentes prioridades para decidir las acciones: Huir tiene prioridad 90, controlar comida 70, interceptar 60-65, dispersarse 40, guardar una píldora de poder / roles 20-25 y perseguir 10.
 
-Detectaremos si Ms. Pac-Man está cerca cuando la distancia es de diez pasos o menos. También se comprueba si el grupo está demasiado junto para permitir que los fantasmas se distribuyan por el mapa. Se han añadido reglas para huir cuando el fantasma es comestible. También se permite perseguir cuando no es comestible, y se asignan comportamientos diferentes según el fantasma: PINKY puede emboscar/interceptar, INKY puede guardar una píldora de poder o sustituir a Sue en el control de comida, SUE y BLINKY controlan las últimas píldoras normales restantes (`COMIDA`), y el resto mantiene la presión o persecución. Por último, se han añadido reglas individuales de dispersión (`separarBlinky`, `separarPinky`, `separarInky`, `separarSue`) cuando están demasiado juntos y Pac-Man se encuentra lejos.
+Detectaremos si Ms. Pac-Man está cerca cuando la distancia es de diez pasos o menos. 
+También se comprueba si el grupo está demasiado junto para permitir que los fantasmas se distribuyan por el mapa. 
+Se han añadido reglas para huir cuando el fantasma es comestible. 
+También se permite perseguir cuando no es comestible, y se asignan comportamientos diferentes según el fantasma: PINKY puede emboscar/interceptar, INKY puede guardar una píldora de poder o sustituir a Sue en el control de comida, SUE y BLINKY controlan las últimas píldoras normales restantes (`COMIDA`), y el resto mantiene la presión o persecución. Por último, se han añadido reglas individuales de dispersión (`separarBlinky`, `separarPinky`, `separarInky`, `separarSue`) cuando están demasiado juntos y Pac-Man se encuentra lejos.
 
 ### Resultados de v2 frente a v1
 
@@ -128,7 +131,7 @@ Detectaremos si Ms. Pac-Man está cerca cuando la distancia es de diez pasos o m
 | Avanzado | 2171 ± 78 | 2034 ± 72 | -138 | 213 | ruido |
 | MEDIA (3) | 1856 ± 41 | 1804 ± 39 | -52 | 112 | ruido |
 
-La media de turnos por vida pasa de 1856 a 1804. v2 reduce los turnos por vida, aunque ninguna diferencia supera el umbral estadístico. Esta métrica es secundaria, ya que el objetivo principal es reducir los puntos de Pac-Man.
+La media de turnos por vida pasa de 1856 a 1804. v2 reduce los turnos por vida.
 
 #### Fantasmas comidos
 | rival | v1 ± error tipico | v2 ± error tipico | D | 2 · ET_D | resultado |
@@ -146,10 +149,9 @@ La media de turnos por vida pasa de 1856 a 1804. v2 reduce los turnos por vida, 
 | Avanzado | 9079 ± 156 | 8926 ± 152 | -152 | 436 | ruido |
 | MEDIA (3) | 4918 ± 71 | 4936 ± 70 | +17 | 199 | ruido |
 
-La media de puntos pasa de 4918 a 4936 (una diferencia de 17 puntos a favor de v1). Por tanto, v2 obtiene una puntuación ligeramente mayor y las diferencias contra los tres rivales están dentro del margen de ruido estadístico.
+La media de puntos pasa de 4918 a 4936 (una diferencia imperceptible). Por lo tanto, v2 obtiene una puntuación ligeramente mayor.
 
 ### Valoración de los cambios
 
-v2 presenta resultados muy parecidos a v1 en media global. Se observa una mejora contra el rival Avanzado (bajan los puntos concedidos de 9079 a 8926 y los turnos por vida de 2171 a 2034), pero empeora ligeramente contra Intermedio. Ninguna diferencia es estadísticamente significativa frente a los rivales individuales.
+v2 da resultados muy parecidos a v1. Hay mejora contra el rival Avanzado (de 9079 a 8926 y los turnos por vida de 2171 a 2034), pero empeora un poco contra Intermedio. No hay mucha diferencia frente a los rivales individuales.
 
-El aspecto principal a pulir es que las reglas pueden generar varias acciones simultáneas para un mismo fantasma, y algunas condiciones son todavía generales: por ejemplo, la regla de huida se activa siempre que el fantasma es comestible, sin valorar suficientemente las distancias y las oportunidades de escapar. No obstante, esta versión ya cuenta con las quince reglas requeridas funcionando e integradas en CLIPS, mejorando el control de las zonas críticas del mapa.

@@ -24,7 +24,7 @@ public class Ghosts extends GhostController {
     private final EnumMap<GHOST, RuleEngine> motores = new EnumMap<>(GHOST.class);
 
     public Ghosts() {
-        this("ghosts-v1.clp");                    // la version que va al concurso
+        this("ghosts-v2.clp");                    // la version que va al concurso
     }
 
     /** Cada version, un .clp distinto, con el mismo Input y las mismas acciones. */
