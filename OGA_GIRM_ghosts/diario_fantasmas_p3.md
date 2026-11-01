@@ -95,19 +95,20 @@ Comprobamos con "TrazaReglas" que la regla se disparaba en las situaciones previ
 
 ### ¿Por qué ha salido tan mal contra Avanzado?
 
-La idea parecía buena en teoría, pero igualmente la puntuación empeora claramente con Ms. Pac-Man Avanzado ($+593$ puntos y casi 1 fantasma más comido por partida, pasando de sobra el umbral de $2\cdot ET_D$).
+La idea parecía buena en teoría, pero la puntuacion incluso empeora con el pacman en avanzado.
 
-Pusimos de nuevo "VerPartida" contra el rival Avanzado para entender qué estaba pasando, y nos dimos cuenta de varias cosas:
-1. **Le dejamos el camino libre:** Poner un radio de 15 pasos para la píldora hace que los fantasmas salgan corriendo antes de tiempo. Pac-Man Avanzado va directo a por comida y, en cuanto se acerca un poco a la píldora, los fantasmas se apartan y le despejan el pasillo. Pac-Man se come la píldora gratis y sin presión.
-2. **Los fantasmas se acorralan solos:** Al huir a ciegas por pasillos estrechos cuando Pac-Man aún ni ha comido la píldora, los fantasmas acaban metiéndose en fondos de saco. Cuando Pac-Man finalmente llega a la píldora y se la traga, los fantasmas ya no tienen salida y caen uno detrás de otro.
-3. **Falta de agresividad coordinada e intercepción:** En vez de huir por miedo a la píldora y regalarle el mapa, lo que de verdad necesitamos es presionar sus rutas con anticipación (interceptar cruces en vez de seguirla en fila india) y controlar las zonas donde Pac-Man busca limpiar puntos.
+Pusimos de nuevo "VerPartida" contra el rival Avanzado y nos dimos cuenta de varias cosas:
+
+1. Poner un radio de 15 pasos para la píldora hace que los fantasmas salgan corriendo antes de tiempo. 
+2. Los fantasmas se acorralan solos para cuando pacman se ha comido la power pil, de forma que no tienen forma de huir
+
+
 
 ### Qué hacer en la siguiente versión (v2)
 Lo dejamos aquí por hoy. Visto que la huida preventiva aislada de la v1 empeora el control del mapa, para la `v2` tenemos claro el plan:
-- Quitar esa regla de huida preventiva precipitada ante píldoras de poder y volver a una huida centrada en cuando somos comestibles.
-- Apostar fuerte por la intercepción anticipada de rutas (aprovechando la acción de emboscada no solo con Pinky, sino permitiendo que otros fantasmas como Blinky o Sue corten camino cuando Pac-Man está a distancia).
-- Controlar el final de partida supervisando las últimas píldoras de comida del laberinto para no dejarle limpiar el nivel con facilidad.
-- Desglosar reglas específicas de dispersión por fantasma para que cubran distintas salidas en las intersecciones, ampliando la base hasta el mínimo de 15 reglas requeridas por la práctica.
+- Quitar esa regla de huida preventiva por píldoras de poder y volver a la huida cuando son comestibles.
+- Mejorar mas la intercepción anticipada de rutas (aprovechando la acción de emboscada) para que todos los fantasmas puedan hacerlo (no solo Pinkys).
+- Controlar el final de partida supervisando las últimas píldoras ya que es mas facil campear las pocas pildoras del final.
 
 ---
 
